@@ -1,0 +1,72 @@
+/* ==========================================================================
+   Tokens de diseño — identidad visual de Acme School
+   ========================================================================== */
+:root {
+  /* Color: índigo institucional + ámbar como acento */
+  --c-primary-50: #eef0ff;
+  --c-primary-100: #e0e3ff;
+  --c-primary-200: #c7cbfe;
+  --c-primary-500: #5b54e8;
+  --c-primary-600: #4338ca;
+  --c-primary-700: #3730a3;
+  --c-primary-900: #1e1b4b;
+
+  --c-accent: #f59e0b;
+  --c-accent-soft: #fef3c7;
+
+  --c-success: #15803d;
+  --c-success-soft: #dcfce7;
+  --c-danger: #b91c1c;
+  --c-danger-soft: #fee2e2;
+  --c-warning: #a16207;
+  --c-warning-soft: #fef9c3;
+  --c-info: #1d4ed8;
+  --c-info-soft: #dbeafe;
+
+  --c-bg: #f5f6fb;
+  --c-surface: #ffffff;
+  --c-surface-muted: #f9fafc;
+  --c-border: #e2e5ef;
+  --c-border-strong: #c9cedd;
+  --c-text: #191c2b;
+  --c-muted: #565d72;
+
+  /* Tipografía */
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: clamp(1.6rem, 1.2rem + 1.4vw, 2.1rem);
+  --fs-3xl: clamp(2rem, 1.4rem + 2.6vw, 3.1rem);
+
+  /* Espaciado (escala de 4px) */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+
+  /* Forma y profundidad */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+  --shadow-sm: 0 1px 2px rgb(25 28 43 / 0.06);
+  --shadow: 0 2px 4px rgb(25 28 43 / 0.04), 0 8px 24px rgb(25 28 43 / 0.06);
+  --shadow-lg: 0 12px 40px rgb(30 27 75 / 0.18);
+  --ring: 0 0 0 3px rgb(91 84 232 / 0.35);
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 140ms;
+  --dur: 240ms;
+  --dur-slow: 420ms;
+
+  --container: 1180px;
+  --navbar-h: 64px;
+}
