@@ -7,7 +7,10 @@ import { navigate } from '../router.js';
 import { escapeHtml, initials, toast } from '../utils/dom.js';
 import { icons } from '../utils/icons.js';
 
-const PRIVATE_LINKS = [{ path: '/usuarios', label: 'Usuarios' }];
+const PRIVATE_LINKS = [
+  { path: '/examenes', label: 'Exámenes' },
+  { path: '/usuarios', label: 'Usuarios' },
+];
 
 class AppNavbar extends HTMLElement {
   connectedCallback() {

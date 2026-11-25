@@ -6,12 +6,14 @@
 import { isAuthenticated } from './services/auth.service.js';
 
 const REDIRECT_KEY = 'acme:redirect';
-const HOME_PRIVATE = '/usuarios';
+const HOME_PRIVATE = '/examenes';
 const HOME_PUBLIC = '/login';
 
 const routes = [
   { path: '/login', tag: 'login-view', title: 'Iniciar sesión', guestOnly: true },
   { path: '/usuarios', tag: 'users-view', title: 'Gestión de usuarios', private: true },
+  { path: '/examenes', tag: 'exams-view', title: 'Gestión de exámenes', private: true },
+  { path: '/examenes/:id/preguntas', tag: 'exam-questions-view', title: 'Preguntas del examen', private: true },
 ];
 
 function compile(path) {
@@ -79,10 +81,11 @@ function render(outlet) {
   view.params = params;
   view.classList.add('view');
 
+  // El título se fija antes de montar la vista para que ella pueda refinarlo.
+  document.title = `${route.title} · Acme School`;
   outlet.focus({ preventScroll: true });
   outlet.replaceChildren(view);
   window.scrollTo({ top: 0 });
-  document.title = `${route.title} · Acme School`;
   window.dispatchEvent(new CustomEvent('route:change', { detail: { path } }));
 }
 

@@ -552,3 +552,29 @@
 }
 .stat__value { font-size: var(--fs-2xl); font-weight: 800; color: var(--c-primary-700); line-height: 1.1; }
 .stat__label { font-size: var(--fs-xs); color: var(--c-muted); }
+
+/* ---------- Extras de formularios (fase 2) ---------- */
+.field textarea { resize: vertical; min-height: 88px; line-height: 1.5; }
+
+.input--upper { text-transform: uppercase; }
+.input--upper::placeholder { text-transform: none; }
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--sp-4);
+}
+
+a.icon-btn { text-decoration: none; }
+
+.badge svg { width: 12px; height: 12px; }
+
+.code {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--c-surface-muted);
+  border: 1px solid var(--c-border);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}

@@ -7,6 +7,8 @@ import './components/app-confirm.js';
 import './components/app-navbar.js';
 import './views/login-view.js';
 import './views/users-view.js';
+import './views/exams-view.js';
+import './views/exam-questions-view.js';
 
 import { ensureSeed } from './data/seed.js';
 import { startRouter } from './router.js';
