@@ -32,3 +32,54 @@ export function validateUser(data, { requirePassword }) {
 
   return errors;
 }
+
+export const QUESTION_LIMITS = Object.freeze({ minAnswers: 2, maxAnswers: 6 });
+
+const isIntInRange = (value, min, max) => Number.isInteger(value) && value >= min && value <= max;
+
+export function validateExam(data) {
+  const errors = {};
+
+  if (!/^[A-Z0-9-]{3,20}$/.test(data.codigo)) {
+    errors.codigo = 'Usa de 3 a 20 caracteres: letras, números o guiones.';
+  }
+  if (data.titulo.length < 3 || data.titulo.length > 100) {
+    errors.titulo = 'El título debe tener entre 3 y 100 caracteres.';
+  }
+  if (!isIntInRange(data.tiempo, 1, 300)) {
+    errors.tiempo = 'Ingresa un número entero entre 1 y 300 minutos.';
+  }
+  if (!isIntInRange(data.porcentajeAprobacion, 1, 100)) {
+    errors.porcentajeAprobacion = 'Ingresa un porcentaje entero entre 1 y 100.';
+  }
+  if (data.descripcion.length < 10 || data.descripcion.length > 500) {
+    errors.descripcion = 'La descripción debe tener entre 10 y 500 caracteres.';
+  }
+
+  return errors;
+}
+
+export function validateQuestion(data) {
+  const errors = {};
+  const { minAnswers, maxAnswers } = QUESTION_LIMITS;
+
+  if (data.enunciado.length < 5 || data.enunciado.length > 300) {
+    errors.enunciado = 'El enunciado debe tener entre 5 y 300 caracteres.';
+  }
+
+  const respuestas = data.respuestas;
+  if (respuestas.length < minAnswers || respuestas.length > maxAnswers) {
+    errors.respuestas = `Agrega entre ${minAnswers} y ${maxAnswers} respuestas.`;
+  } else if (respuestas.some((r) => r.descripcion.length === 0)) {
+    errors.respuestas = 'Ninguna respuesta puede quedar vacía.';
+  } else {
+    const texts = respuestas.map((r) => r.descripcion.toLowerCase());
+    if (new Set(texts).size !== texts.length) errors.respuestas = 'Hay respuestas repetidas.';
+  }
+
+  if (respuestas.filter((r) => r.correcta).length !== 1) {
+    errors.correcta = 'Marca exactamente una respuesta como correcta.';
+  }
+
+  return errors;
+}

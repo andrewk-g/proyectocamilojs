@@ -9,6 +9,7 @@ export const KEYS = Object.freeze({
   exams: 'exams',
   attempts: 'attempts',
   session: 'session',
+  meta: 'meta',
 });
 
 export function read(key, fallback = []) {
