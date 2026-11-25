@@ -11,14 +11,9 @@
 import { read, write, KEYS } from '../data/storage.js';
 import { createSalt, hashPassword, randomId } from '../utils/crypto.js';
 import { validateUser } from '../utils/validators.js';
+import { ValidationError, assertValid } from '../utils/errors.js';
 
-export class ValidationError extends Error {
-  constructor(errors) {
-    super('Revisa los campos marcados.');
-    this.name = 'ValidationError';
-    this.errors = errors;
-  }
-}
+export { ValidationError };
 
 /** Quita los datos sensibles antes de entregar un usuario a la UI. */
 export const toPublicUser = ({ salt, passwordHash, ...user }) => user;
@@ -43,7 +38,7 @@ function assertUnique(users, data, ignoreId) {
   if (others.some((u) => u.email === data.email)) {
     errors.email = 'Este correo ya está registrado.';
   }
-  if (Object.keys(errors).length) throw new ValidationError(errors);
+  assertValid(errors);
 }
 
 /** Uso interno (autenticación): devuelve el registro completo. */
@@ -69,8 +64,7 @@ export function getUser(id) {
 
 export async function createUser(input) {
   const data = normalize(input);
-  const errors = validateUser(data, { requirePassword: true });
-  if (Object.keys(errors).length) throw new ValidationError(errors);
+  assertValid(validateUser(data, { requirePassword: true }));
   assertUnique(read(KEYS.users), data, null);
 
   const salt = createSalt();
@@ -90,8 +84,7 @@ export async function createUser(input) {
 
 export async function updateUser(id, input) {
   const data = normalize(input);
-  const errors = validateUser(data, { requirePassword: false });
-  if (Object.keys(errors).length) throw new ValidationError(errors);
+  assertValid(validateUser(data, { requirePassword: false }));
   if (!findUserRecordById(id)) throw new Error('El usuario ya no existe.');
   assertUnique(read(KEYS.users), data, id);
 

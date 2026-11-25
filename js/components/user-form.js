@@ -5,6 +5,7 @@
 import { createUser, getUser, updateUser, ValidationError } from '../services/users.service.js';
 import { CARGOS } from '../utils/validators.js';
 import { formToObject, prefersReducedMotion, toast } from '../utils/dom.js';
+import { clearFieldError, clearFieldErrors, showFieldErrors, togglePasswordVisibility } from '../utils/forms.js';
 
 const FIELDS = [
   { name: 'identificacion', label: 'Número de identificación', attrs: 'inputmode="numeric" autocomplete="off" maxlength="15"' },
@@ -111,35 +112,19 @@ class UserForm extends HTMLElement {
   }
 
   togglePassword(button) {
-    const input = this.form.elements.password;
-    const show = input.type === 'password';
-    input.type = show ? 'text' : 'password';
-    button.textContent = show ? 'Ocultar' : 'Mostrar';
-    button.setAttribute('aria-pressed', String(show));
+    togglePasswordVisibility(this.form.elements.password, button);
   }
 
   clearFieldError(input) {
-    if (!input?.name) return;
-    input.removeAttribute('aria-invalid');
-    const error = this.querySelector(`#uf-${input.name}-error`);
-    if (error) error.textContent = '';
+    clearFieldError(this.form, input, 'uf');
   }
 
   clearErrors() {
-    this.form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-    this.form.querySelectorAll('.field__error').forEach((el) => { el.textContent = ''; });
+    clearFieldErrors(this.form);
   }
 
   showErrors(errors) {
-    let first = null;
-    for (const [name, message] of Object.entries(errors)) {
-      const input = this.form.elements[name];
-      if (!input) continue;
-      input.setAttribute('aria-invalid', 'true');
-      this.querySelector(`#uf-${name}-error`).textContent = message;
-      first ??= input;
-    }
-    first?.focus();
+    showFieldErrors(this.form, errors, 'uf');
   }
 
   async handleSubmit(event) {

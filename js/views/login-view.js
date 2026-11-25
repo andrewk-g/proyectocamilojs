@@ -4,6 +4,7 @@
 import { login } from '../services/auth.service.js';
 import { consumeRedirect, navigate } from '../router.js';
 import { formToObject, toast } from '../utils/dom.js';
+import { togglePasswordVisibility } from '../utils/forms.js';
 import { icons } from '../utils/icons.js';
 
 const FEATURES = [
@@ -65,11 +66,7 @@ class LoginView extends HTMLElement {
   }
 
   togglePassword(button) {
-    const input = this.querySelector('#login-password');
-    const show = input.type === 'password';
-    input.type = show ? 'text' : 'password';
-    button.textContent = show ? 'Ocultar' : 'Mostrar';
-    button.setAttribute('aria-pressed', String(show));
+    togglePasswordVisibility(this.querySelector('#login-password'), button);
   }
 
   showError(message) {
