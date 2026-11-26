@@ -1,15 +1,20 @@
 /**
  * Router basado en hash (#/ruta). Cada ruta monta un Web Component dentro
  * del <main>. Las rutas "private" exigen sesión; las "guestOnly" solo se
- * muestran sin sesión (p. ej. el login).
+ * muestran sin sesión (p. ej. el login); las demás son públicas.
  */
 import { isAuthenticated } from './services/auth.service.js';
 
 const REDIRECT_KEY = 'acme:redirect';
 const HOME_PRIVATE = '/examenes';
-const HOME_PUBLIC = '/login';
+const HOME_PUBLIC = '/';
 
 const routes = [
+  // Módulo público de resolución de exámenes
+  { path: '/', tag: 'public-exams-view', title: 'Exámenes disponibles' },
+  { path: '/presentar/:id', tag: 'exam-runner-view', title: 'Presentar examen' },
+  { path: '/resultado/:id', tag: 'exam-result-view', title: 'Resultado del examen' },
+  // Módulos privados
   { path: '/login', tag: 'login-view', title: 'Iniciar sesión', guestOnly: true },
   { path: '/usuarios', tag: 'users-view', title: 'Gestión de usuarios', private: true },
   { path: '/examenes', tag: 'exams-view', title: 'Gestión de exámenes', private: true },

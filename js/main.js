@@ -9,6 +9,9 @@ import './views/login-view.js';
 import './views/users-view.js';
 import './views/exams-view.js';
 import './views/exam-questions-view.js';
+import './views/public-exams-view.js';
+import './views/exam-runner-view.js';
+import './views/exam-result-view.js';
 
 import { ensureSeed } from './data/seed.js';
 import { startRouter } from './router.js';

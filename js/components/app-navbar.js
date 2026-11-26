@@ -1,16 +1,27 @@
 /**
- * <app-navbar>: barra de navegación. Muestra los módulos privados solo si
- * hay sesión iniciada y se actualiza al cambiar la sesión o la ruta.
+ * <app-navbar>: barra de navegación. El enlace público siempre se muestra;
+ * los módulos privados solo si hay sesión iniciada. Se actualiza al cambiar
+ * la sesión o la ruta.
  */
 import { getCurrentUser, logout } from '../services/auth.service.js';
 import { navigate } from '../router.js';
 import { escapeHtml, initials, toast } from '../utils/dom.js';
 import { icons } from '../utils/icons.js';
 
-const PRIVATE_LINKS = [
-  { path: '/examenes', label: 'Exámenes' },
-  { path: '/usuarios', label: 'Usuarios' },
+// "match": prefijos de ruta que marcan el enlace como activo.
+const PUBLIC_LINKS = [
+  { path: '/', label: 'Presentar examen', match: ['/presentar', '/resultado'] },
 ];
+const PRIVATE_LINKS = [
+  { path: '/examenes', label: 'Gestionar exámenes', match: ['/examenes'] },
+  { path: '/usuarios', label: 'Usuarios', match: ['/usuarios'] },
+];
+
+const linkItem = (l) =>
+  `<li><a href="#${l.path}" data-path="${l.path}" data-match="${l.match.join(' ')}">${l.label}</a></li>`;
+
+const isActive = (link, path) =>
+  path === link.dataset.path || link.dataset.match.split(' ').some((prefix) => path.startsWith(prefix));
 
 class AppNavbar extends HTMLElement {
   connectedCallback() {
@@ -32,14 +43,9 @@ class AppNavbar extends HTMLElement {
 
   render() {
     const user = getCurrentUser();
-    const menu = user
+    const links = user ? [...PUBLIC_LINKS, ...PRIVATE_LINKS] : PUBLIC_LINKS;
+    const account = user
       ? `
-        <button class="icon-btn navbar__toggle" type="button" data-action="toggle"
-          aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú">${icons.menu}</button>
-        <nav class="navbar__menu" id="nav-menu" aria-label="Principal">
-          <ul class="navbar__links">
-            ${PRIVATE_LINKS.map((l) => `<li><a href="#${l.path}" data-path="${l.path}">${l.label}</a></li>`).join('')}
-          </ul>
           <div class="navbar__user">
             <span class="avatar" aria-hidden="true">${escapeHtml(initials(user.nombre))}</span>
             <span class="navbar__user-info">
@@ -47,9 +53,16 @@ class AppNavbar extends HTMLElement {
               <span class="navbar__user-role">${escapeHtml(user.cargo)}</span>
             </span>
             <button class="btn btn--ghost btn--sm" type="button" data-action="logout">Cerrar sesión</button>
-          </div>
-        </nav>`
-      : '';
+          </div>`
+      : '<a class="btn btn--primary btn--sm navbar__login" href="#/login">Acceso docentes</a>';
+
+    const menu = `
+        <button class="icon-btn navbar__toggle" type="button" data-action="toggle"
+          aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú">${icons.menu}</button>
+        <nav class="navbar__menu" id="nav-menu" aria-label="Principal">
+          <ul class="navbar__links">${links.map(linkItem).join('')}</ul>
+          ${account}
+        </nav>`;
 
     this.innerHTML = `
       <header class="navbar">
@@ -60,12 +73,12 @@ class AppNavbar extends HTMLElement {
           ${menu}
         </div>
       </header>`;
-    this.highlight(location.hash.slice(1));
+    this.highlight(location.hash.slice(1) || '/');
   }
 
   highlight(path) {
     this.querySelectorAll('[data-path]').forEach((link) => {
-      const active = path.startsWith(link.dataset.path);
+      const active = isActive(link, path);
       link.classList.toggle('is-active', active);
       if (active) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
