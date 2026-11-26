@@ -482,8 +482,11 @@
 
 @media (max-width: 640px) {
   .runner__header { grid-template-columns: 1fr; top: calc(var(--navbar-h) + 4px); padding: var(--sp-3) var(--sp-4); }
-  .runner__info .meta-list,
+  /* El total de preguntas y el % para aprobar siguen visibles, en versión compacta. */
   .runner__info .eyebrow { display: none; }
+  .runner__info .meta-list { gap: var(--sp-1); margin-top: var(--sp-1); }
+  .runner__info .meta-list li { padding: 2px var(--sp-2); font-size: var(--fs-xs); }
+  .runner__info .meta-list svg { width: 14px; height: 14px; }
   .runner__title { font-size: var(--fs-lg); }
   .runner__footer .btn { width: 100%; }
 }
@@ -542,7 +545,11 @@ exam-question { display: block; }
 }
 exam-question.is-answered .exam-question { border-color: var(--c-primary-200); }
 
+/* Un <legend> se dibuja sobre el borde del <fieldset>; con float (y clear en
+   lo que sigue) queda dentro de la tarjeta sin perder su semántica. */
 .exam-question__title {
+  float: left;
+  width: 100%;
   display: flex;
   gap: var(--sp-3);
   margin-bottom: var(--sp-4);
@@ -566,7 +573,7 @@ exam-question.is-answered .exam-question { border-color: var(--c-primary-200); }
 }
 exam-question.is-answered .exam-question__num { background: var(--c-success); }
 
-.exam-question__options { display: grid; gap: var(--sp-2); }
+.exam-question__options { clear: both; display: grid; gap: var(--sp-2); }
 
 .option {
   position: relative;
