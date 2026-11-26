@@ -2,7 +2,7 @@
  * <public-exams-view>: módulo PÚBLICO (no requiere sesión). Lista los
  * exámenes disponibles con su título, tiempo y porcentaje de aprobación.
  */
-import { getActiveAttempt, listAvailableExams } from '../services/attempts.service.js';
+import { discardActiveAttempt, getActiveAttempt, listAvailableExams } from '../services/attempts.service.js';
 import { getExam } from '../services/exams.service.js';
 import { escapeHtml } from '../utils/dom.js';
 import { icons } from '../utils/icons.js';
@@ -53,8 +53,13 @@ class PublicExamsView extends HTMLElement {
   /** Si hay un examen a medias, ofrece continuarlo. */
   renderResume() {
     const active = getActiveAttempt();
-    const exam = active && getExam(active.examId);
-    if (!exam) return;
+    if (!active) return;
+    const exam = getExam(active.examId);
+    if (!exam || exam.preguntas.length === 0) {
+      // El examen se eliminó o se quedó sin preguntas: el intento ya no se puede continuar.
+      discardActiveAttempt();
+      return;
+    }
     const box = this.querySelector('[data-resume]');
     box.hidden = false;
     box.innerHTML = `

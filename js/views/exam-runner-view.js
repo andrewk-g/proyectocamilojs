@@ -9,7 +9,7 @@
  */
 import '../components/exam-timer.js';
 import '../components/exam-question.js';
-import { finishAttempt, getActiveAttempt, saveAnswer, startAttempt } from '../services/attempts.service.js';
+import { discardActiveAttempt, finishAttempt, getActiveAttempt, saveAnswer, startAttempt } from '../services/attempts.service.js';
 import { getExam } from '../services/exams.service.js';
 import { navigate } from '../router.js';
 import { ValidationError } from '../utils/errors.js';
@@ -27,12 +27,15 @@ class ExamRunnerView extends HTMLElement {
     this.finishing = false;
     this.onBeforeUnload = (event) => event.preventDefault();
 
+    const active = getActiveAttempt();
+
     if (!this.exam || this.exam.preguntas.length === 0) {
+      // Si había un intento de este examen, ya no se puede continuar.
+      if (active?.examId === this.examId) discardActiveAttempt();
       this.renderUnavailable();
       return;
     }
 
-    const active = getActiveAttempt();
     if (active?.examId === this.examId) {
       // Se reanuda el intento (p. ej. tras recargar la página).
       if (Date.now() >= active.deadline) this.finish('tiempo');

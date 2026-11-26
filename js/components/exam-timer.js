@@ -55,7 +55,7 @@ class ExamTimer extends HTMLElement {
     // No se anuncian los umbrales que ya pasaron (p. ej. al reanudar).
     this.pending = ANNOUNCEMENTS.filter(([threshold]) => deadline - Date.now() > threshold);
     this.tick();
-    this.interval = setInterval(() => this.tick(), 250);
+    if (!this.expired) this.interval = setInterval(() => this.tick(), 250);
   }
 
   stop() {
