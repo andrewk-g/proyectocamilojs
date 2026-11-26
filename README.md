@@ -20,6 +20,40 @@ Aplicación web hecha con **HTML, CSS y JavaScript puro (Web Components)** para 
 4. Responde las preguntas mientras corre el reloj y pulsa **Terminar** (o se entrega solo cuando el tiempo llega a 0).
 5. Ve su porcentaje de respuestas acertadas y si aprobó o no.
 
+## Wiki
+
+La documentación detallada del proyecto (arquitectura, Web Components, router, modelo de datos, reloj, seguridad, accesibilidad y requisitos cumplidos) está en la wiki: https://github.com/andrewk-g/proyectocamilojs/wiki
+
+## Capturas
+
+### Exámenes disponibles
+
+![Lista pública de exámenes disponibles](capturas/inicio.png)
+
+### Examen en curso con reloj en tiempo real
+
+![Examen en curso con el reloj y las preguntas enumeradas](capturas/examen.png)
+
+### Resultado
+
+![Resultado del examen con el porcentaje de respuestas acertadas](capturas/resultado.png)
+
+### Gestión de exámenes
+
+![Gestión de exámenes con formulario y tabla](capturas/gestion-examenes.png)
+
+### Preguntas y respuestas
+
+![Editor de preguntas con la respuesta correcta marcada](capturas/preguntas.png)
+
+### Gestión de usuarios
+
+![Gestión de usuarios con formulario y tabla](capturas/usuarios.png)
+
+### En el celular
+
+<img src="capturas/movil.png" alt="Examen en curso en un celular" width="300">
+
 ## Cómo ejecutarlo
 
 La aplicación usa módulos de JavaScript (`type="module"`) y la Web Crypto API, por eso **debe abrirse desde un servidor local** (no con doble clic sobre el archivo):
@@ -91,6 +125,7 @@ Cada examen tiene su propia pantalla (`#/examenes/:id/preguntas`):
 ```
 ├── index.html                 # Contenedor de la SPA
 ├── assets/                    # Favicon
+├── capturas/                  # Capturas de pantalla del README y la wiki
 ├── css/
 │   ├── variables.css          # Tokens de diseño (colores, tipografía, espaciado, movimiento)
 │   ├── base.css               # Reset, tipografía y utilidades
