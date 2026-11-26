@@ -358,10 +358,17 @@
 .empty__title { color: var(--c-text); font-weight: 700; }
 
 /* ---------- Navbar ---------- */
-.navbar {
+/* El sticky va en el componente: un custom element es inline por defecto y
+   un hijo sticky no puede pegarse fuera de su contenedor. */
+app-navbar {
   position: sticky;
   top: 0;
   z-index: 50;
+  display: block;
+}
+
+.navbar {
+  position: relative;
   height: var(--navbar-h);
   border-bottom: 1px solid var(--c-border);
   background: rgb(255 255 255 / 0.88);
@@ -465,7 +472,6 @@
       visibility var(--dur);
   }
   .navbar__menu.is-open { opacity: 1; visibility: visible; transform: none; }
-  .navbar__menu--guest { position: static; flex-direction: row; padding: 0; border: 0; box-shadow: none; opacity: 1; visibility: visible; transform: none; background: none; }
   .navbar__links { flex-direction: column; }
   .navbar__user { padding: var(--sp-3) 0 0; border-left: 0; border-top: 1px solid var(--c-border); }
   .navbar__user .btn { margin-left: auto; }
@@ -577,4 +583,35 @@ a.icon-btn { text-decoration: none; }
   font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
   font-size: var(--fs-xs);
   font-weight: 600;
+}
+
+/* ---------- Extras (fase 3) ---------- */
+.btn--lg { min-height: 52px; padding: 0 var(--sp-6); font-size: var(--fs-base); }
+
+.notice {
+  padding: var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--c-warning-soft);
+  color: var(--c-warning);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--c-primary-100);
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--c-primary-500), var(--c-primary-700));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+@media (max-width: 760px) {
+  .navbar__login { align-self: stretch; }
 }
