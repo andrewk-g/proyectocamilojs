@@ -27,6 +27,12 @@ class AppConfirm extends HTMLElement {
     this.dialog.addEventListener('close', () => this.settle(this.dialog.returnValue === 'ok'));
   }
 
+  /** Cierra el diálogo como cancelado (p. ej. si el examen termina por tiempo). */
+  dismiss() {
+    if (this.dialog?.open) this.dialog.close('cancel');
+    this.settle(false);
+  }
+
   settle(result) {
     const resolve = this.resolver;
     this.resolver = null;
