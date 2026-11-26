@@ -33,6 +33,18 @@ export function validateUser(data, { requirePassword }) {
   return errors;
 }
 
+/** Datos que pide el módulo público antes de presentar un examen. */
+export function validateStudent(data) {
+  const errors = {};
+  if (!/^\d{5,15}$/.test(data.identificacion)) {
+    errors.identificacion = 'Ingresa entre 5 y 15 dígitos, sin puntos ni espacios.';
+  }
+  if (data.nombre.length < 3 || data.nombre.length > 80) {
+    errors.nombre = 'Escribe tu nombre completo (entre 3 y 80 caracteres).';
+  }
+  return errors;
+}
+
 export const QUESTION_LIMITS = Object.freeze({ minAnswers: 2, maxAnswers: 6 });
 
 const isIntInRange = (value, min, max) => Number.isInteger(value) && value >= min && value <= max;

@@ -8,6 +8,7 @@ export const KEYS = Object.freeze({
   users: 'users',
   exams: 'exams',
   attempts: 'attempts',
+  activeAttempt: 'activeAttempt',
   session: 'session',
   meta: 'meta',
 });
