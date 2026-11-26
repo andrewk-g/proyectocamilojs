@@ -10,7 +10,15 @@ Aplicación web hecha con **HTML, CSS y JavaScript puro (Web Components)** para 
 | --- | --- | --- |
 | 1 | Estructura, sistema de diseño, persistencia, login y gestión de usuarios | ✅ Terminada |
 | 2 | Gestión de exámenes, preguntas y respuestas | ✅ Terminada |
-| 3 | Módulo público de resolución con reloj y resultados | ⏳ Pendiente |
+| 3 | Módulo público de resolución con reloj y resultados | ✅ Terminada |
+
+## Flujo completo
+
+1. Un usuario administrativo o docente inicia sesión (**Acceso docentes**).
+2. En **Gestionar exámenes** crea un examen y le agrega preguntas con sus respuestas.
+3. Cualquier estudiante, sin iniciar sesión, entra a **Presentar examen**, elige el examen y escribe su identificación y su nombre.
+4. Responde las preguntas mientras corre el reloj y pulsa **Terminar** (o se entrega solo cuando el tiempo llega a 0).
+5. Ve su porcentaje de respuestas acertadas y si aprobó o no.
 
 ## Cómo ejecutarlo
 
@@ -39,6 +47,20 @@ Desde el módulo de usuarios se pueden crear más cuentas (administrativos o doc
 La primera vez también se crea un examen de ejemplo, **Fundamentos de JavaScript (JS-101)**, con 5 preguntas. Si se elimina, no vuelve a crearse.
 
 ## Módulos
+
+### Resolución de exámenes (público)
+No requiere iniciar sesión; es la página de inicio (`#/`).
+- **Lista de exámenes disponibles**: muestra título, tiempo para resolverlo y porcentaje para aprobar de cada examen que tenga al menos una pregunta. Incluye buscador.
+- **Datos del estudiante**: al elegir un examen se piden número de identificación y nombre completo; las respuestas quedan asociadas a esos datos.
+- **Vista del examen**:
+  - Encabezado fijo con el título, el número total de preguntas y el porcentaje para aprobar.
+  - Reloj en tiempo real que empieza en los minutos asignados y termina en 0; cambia a ámbar y luego a rojo cuando queda poco tiempo.
+  - Preguntas enumeradas con sus posibles respuestas; solo se puede elegir una por pregunta.
+  - Barra de progreso de preguntas respondidas.
+  - Botón **Terminar** para entregar antes de tiempo (si faltan preguntas, pide confirmación).
+- **Tiempo agotado**: al llegar a 0 el examen se entrega automáticamente.
+- **Resultado**: porcentaje de respuestas acertadas, mensaje de aprobación o no aprobación según el porcentaje configurado, respuestas correctas, tiempo usado y detalle de cada pregunta (acertada o no, sin revelar la respuesta correcta).
+- **Robustez**: el examen en curso se guarda en `localStorage` con su hora límite. Si el estudiante recarga la página o sale y vuelve, continúa donde iba y el reloj sigue siendo exacto; si el tiempo se acabó mientras estaba fuera, se entrega al volver.
 
 ### Login
 Vista inicial de los módulos privados. Valida correo y contraseña contra los usuarios registrados. Si alguien intenta entrar a una ruta privada sin sesión, se le envía al login y, al ingresar, vuelve a la ruta que pidió.
@@ -83,7 +105,8 @@ Cada examen tiene su propia pantalla (`#/examenes/:id/preguntas`):
     ├── services/
     │   ├── auth.service.js    # Login, logout y sesión
     │   ├── users.service.js   # CRUD de usuarios
-    │   └── exams.service.js   # CRUD de exámenes y de sus preguntas
+    │   ├── exams.service.js   # CRUD de exámenes y de sus preguntas
+    │   └── attempts.service.js # Examen en curso, calificación y resultados
     ├── utils/                 # Validaciones, errores, formularios, cifrado, DOM e íconos
     ├── components/            # Web Components reutilizables
     │   ├── app-navbar.js
@@ -94,8 +117,14 @@ Cada examen tiene su propia pantalla (`#/examenes/:id/preguntas`):
     │   ├── exam-form.js
     │   ├── exam-table.js
     │   ├── question-form.js
-    │   └── question-list.js
+    │   ├── question-list.js
+    │   ├── exam-timer.js      # Reloj en tiempo real
+    │   ├── exam-question.js   # Pregunta con opciones de respuesta
+    │   └── score-ring.js      # Anillo animado con el porcentaje
     └── views/                 # Web Components que representan cada pantalla
+        ├── public-exams-view.js
+        ├── exam-runner-view.js
+        ├── exam-result-view.js
         ├── login-view.js
         ├── users-view.js
         ├── exams-view.js
@@ -162,13 +191,57 @@ Las contraseñas no se guardan en texto plano: se guarda un hash SHA-256 con una
 ]
 ```
 
+`acme:activeAttempt` (examen que se está presentando)
+
+```json
+{
+  "id": "0bc0…",
+  "examId": "a46e…",
+  "identificacion": "1122334455",
+  "nombre": "Laura Pérez",
+  "startedAt": 1795660000000,
+  "deadline": 1795660600000,
+  "respuestas": { "9b2d…": "c3…" }
+}
+```
+
+`acme:attempts` (resultados guardados)
+
+```json
+[
+  {
+    "id": "0bc0…",
+    "examId": "a46e…",
+    "examCodigo": "JS-101",
+    "examTitulo": "Fundamentos de JavaScript",
+    "identificacion": "1122334455",
+    "nombre": "Laura Pérez",
+    "tiempoLimite": 10,
+    "porcentajeAprobacion": 60,
+    "correctas": 3,
+    "total": 5,
+    "porcentaje": 60,
+    "aprobado": true,
+    "finalizadoPor": "usuario",
+    "startedAt": "2026-11-25T15:00:00.000Z",
+    "finishedAt": "2026-11-25T15:04:12.000Z",
+    "detalle": [
+      { "preguntaId": "9b2d…", "enunciado": "¿Qué palabra clave…?", "respuestaId": "c3…", "respuestaTexto": "const", "acertada": true }
+    ]
+  }
+]
+```
+
+El puntaje siempre lo calcula el servicio comparando cada respuesta elegida con la respuesta correcta guardada en el examen. El resultado guarda una copia del enunciado y de la respuesta elegida, así sigue siendo legible aunque después se edite o elimine el examen.
+
 `acme:meta` guarda banderas internas, por ejemplo `{ "examsSeeded": true }`.
 
 ## Decisiones técnicas
 
 - **Web Components** (`customElements.define`) para cada pieza de la interfaz: navbar, notificaciones, diálogo de confirmación, formulario, tabla y vistas.
 - **Comunicación por eventos** (`CustomEvent`): el formulario y la tabla no se conocen entre sí; la vista los coordina.
-- **Router por hash** (`#/login`, `#/examenes`, `#/examenes/:id/preguntas`, `#/usuarios`) con rutas protegidas y parámetros.
+- **Router por hash** con rutas públicas (`#/`, `#/presentar/:id`, `#/resultado/:id`), privadas (`#/examenes`, `#/examenes/:id/preguntas`, `#/usuarios`) y solo para invitados (`#/login`).
+- **Reloj sin bloqueos**: no descuenta segundos con un contador; en cada tic calcula `horaLímite - ahora`. Así no se desfasa aunque el navegador ralentice los intervalos en segundo plano, y la interfaz nunca se congela.
 - **Servicios separados de la interfaz**: los componentes nunca tocan `localStorage` directamente; validan y guardan a través de `users.service.js` y `exams.service.js`.
 - **Accesibilidad**: HTML semántico, etiquetas en todos los campos, mensajes de error asociados con `aria-describedby`, foco visible, navegación por teclado, regiones `aria-live` y respeto de `prefers-reduced-motion`.
 - **Responsive**: diseño mobile-first; en pantallas pequeñas la tabla se convierte en tarjetas y el menú se colapsa.
